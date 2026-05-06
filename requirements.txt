@@ -1,0 +1,9 @@
+flask==3.0.3
+flask-cors==4.0.1
+pdfminer.six==20231228
+pypdf==4.3.1
+spacy==3.7.5
+sentence-transformers==3.0.1
+numpy==1.26.4
+scikit-learn==1.5.1
+torch==2.3.1

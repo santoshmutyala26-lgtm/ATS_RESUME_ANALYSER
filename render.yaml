@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: resumeiq-ats
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter          # Starter plan gives 512 MB RAM — needed for ML models
+    region: singapore      # Closest to India for fast response
+    healthCheckPath: /
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHONUNBUFFERED
+        value: "1"

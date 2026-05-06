@@ -1,0 +1,40 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# ── Virtual environments ───────────────────────────────────────────────────────
+venv/
+venv_new/
+venv_312/
+.venv/
+env/
+ENV/
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────────
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+Thumbs.db
+
+# ── Uploads / temp files ──────────────────────────────────────────────────────
+uploads/
+*.tmp
+*.log
+
+# ── Environment secrets ───────────────────────────────────────────────────────
+.env
+.env.*
+secrets.py
+
+# ── Model cache (downloaded at runtime/build) ─────────────────────────────────
+.cache/
+sentence_transformers_cache/

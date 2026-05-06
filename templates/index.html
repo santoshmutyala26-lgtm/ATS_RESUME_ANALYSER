@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeIQ — ATS Analyzer & Optimizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+
+<body>
+
+  <!-- ───── NAV ───── -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <div class="nav-logo">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <rect width="22" height="22" rx="6" fill="#000000" />
+            <path d="M6 16L11 6L16 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <line x1="7.5" y1="13" x2="14.5" y2="13" stroke="white" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </div>
+        <span class="nav-title">ResumeIQ</span>
+        <span class="nav-badge">ATS Pro</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ───── UPLOAD SCREEN ───── -->
+  <div id="uploadScreen" class="upload-screen">
+    <div class="upload-hero">
+      <div class="hero-eyebrow">AI-Powered Resume Intelligence</div>
+      <h1 class="hero-title">Beat the ATS.<br /><span class="hero-accent">Land the Interview.</span></h1>
+      <p class="hero-sub">Simulate how Google, Microsoft &amp; top companies' ATS systems score your resume. Get exact
+        fixes, not vague tips.</p>
+    </div>
+
+    <div class="upload-card">
+      <div class="upload-cols">
+
+        <!-- Left: Resume Upload -->
+        <div class="upload-col">
+          <div class="col-label">
+            <span class="col-num">01</span>
+            <span>Upload Resume (PDF)</span>
+          </div>
+          <label class="drop-zone" id="dropZone">
+            <input type="file" id="resumeInput" accept=".pdf" hidden />
+            <div class="drop-icon">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M16 4v16M8 12l8-8 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path d="M4 24h24v4H4z" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
+              </svg>
+            </div>
+            <div class="drop-text" id="dropText">Drop PDF here or click to browse</div>
+            <div class="drop-sub">Max 10MB · PDF only</div>
+          </label>
+          <div id="fileChosen" class="file-chosen hidden">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="7" stroke="#22c55e" stroke-width="1.5" />
+              <path d="M5 8l2 2 4-4" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+            <span id="fileName">resume.pdf</span>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="upload-divider">
+          <div class="divider-line"></div>
+          <div class="divider-plus">+</div>
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- Right: Job Description -->
+        <div class="upload-col">
+          <div class="col-label">
+            <span class="col-num">02</span>
+            <span>Paste Job Description</span>
+          </div>
+          <textarea id="jobDesc" class="jd-textarea"
+            placeholder="Paste the full job description here...&#10;&#10;Include requirements, responsibilities, and qualifications for the best analysis."></textarea>
+          <div class="jd-counter"><span id="jdCount">0</span> characters</div>
+        </div>
+      </div>
+
+      <div class="upload-footer">
+        <div class="upload-tips">
+          <span class="tip-item">✦ Full JD gives better results</span>
+          <span class="tip-item">✦ Include requirements section</span>
+          <span class="tip-item">✦ Text-based PDFs only</span>
+        </div>
+        <button class="analyze-btn" id="analyzeBtn" disabled>
+          <span class="btn-text">Analyze Resume</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── LOADING SCREEN ───── -->
+  <div id="loadingScreen" class="loading-screen hidden">
+    <div class="loading-inner">
+      <div class="loading-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="4" fill="none" />
+          <circle cx="40" cy="40" r="34" stroke="#000000" stroke-width="4" fill="none" stroke-dasharray="213"
+            stroke-dashoffset="160" class="ring-spin" />
+        </svg>
+        <div class="loading-pct" id="loadingPct">0%</div>
+      </div>
+      <div class="loading-steps">
+        <div class="loading-step active" id="step1">Extracting resume text…</div>
+        <div class="loading-step" id="step2">Running NLP pipeline…</div>
+        <div class="loading-step" id="step3">Computing keyword matches…</div>
+        <div class="loading-step" id="step4">Generating semantic embeddings…</div>
+        <div class="loading-step" id="step5">Scoring &amp; building suggestions…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── RESULTS SCREEN ───── -->
+  <div id="resultsScreen" class="results-screen hidden">
+
+    <!-- Top bar -->
+    <div class="results-topbar">
+      <button class="back-btn" id="backBtn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        New Analysis
+      </button>
+      <div class="results-title-area">
+        <h2 class="results-page-title">ATS Analysis Report</h2>
+        <span class="results-timestamp" id="analysisTimestamp"></span>
+      </div>
+      <button class="optimize-btn" id="optimizeBtn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        New Analysis
+      </button>
+    </div>
+
+    <!-- Main layout: Left + Right -->
+    <div class="results-layout">
+
+      <!-- ═══ LEFT PANEL ═══ -->
+      <div class="left-panel">
+
+        <!-- ATS Score card -->
+        <div class="score-card">
+          <div class="score-label-top">ATS Score</div>
+          <div class="score-ring-wrap">
+            <canvas id="scoreRing" width="160" height="160"></canvas>
+            <div class="score-center">
+              <div class="score-number" id="scoreNumber">0</div>
+              <div class="score-max">/100</div>
+            </div>
+          </div>
+          <div class="score-verdict" id="scoreVerdict">Analyzing…</div>
+          <div class="score-sublabel" id="scoreLabel">Computing match factors…</div>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="breakdown-card">
+          <div class="card-header">Score Breakdown</div>
+          <div class="breakdown-list" id="breakdownList">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
+        <!-- Skill tabs -->
+        <div class="skills-card">
+          <div class="skills-tab-bar">
+            <button class="skill-tab active" data-tab="missing">Missing Skills</button>
+            <button class="skill-tab" data-tab="matched">Matched Skills</button>
+            <button class="skill-tab" data-tab="clusters">Clusters</button>
+            <button class="skill-tab" data-tab="kwlog">Keyword Log</button>
+          </div>
+          <div class="skills-tab-content">
+            <div class="tab-panel active" id="tab-missing"></div>
+            <div class="tab-panel" id="tab-matched"></div>
+            <div class="tab-panel" id="tab-clusters"></div>
+            <div class="tab-panel" id="tab-kwlog"></div>
+          </div>
+        </div>
+
+        <!-- Keyword density chart -->
+        <div class="density-card">
+          <div class="card-header">Keyword Density</div>
+          <div class="chart-wrap" style="position:relative;height:220px;">
+            <canvas id="densityChart" role="img" aria-label="Keyword density bar chart"></canvas>
+          </div>
+        </div>
+
+        <!-- Section health -->
+        <div class="sections-card">
+          <div class="card-header">Section Health</div>
+          <div id="sectionHealth"></div>
+        </div>
+
+      </div>
+
+      <!-- ═══ RIGHT PANEL ═══ -->
+      <div class="right-panel">
+
+        <!-- Radar chart + score cards row -->
+        <div class="right-top-row">
+          <div class="radar-card">
+            <div class="card-header">Match Profile</div>
+            <div class="chart-wrap" style="position:relative;height:200px;">
+              <canvas id="radarChart" role="img" aria-label="Radar chart of match dimensions"></canvas>
+            </div>
+          </div>
+          <div class="mini-scores-grid" id="miniScoresGrid"></div>
+        </div>
+
+        <!-- Tabs: Resume Preview | Suggestions | Optimization -->
+        <div class="right-tab-bar">
+          <button class="right-tab active" data-rtab="preview">
+            <span class="rtab-icon">📄</span>
+            <span class="rtab-label">Resume Preview</span>
+          </button>
+          <button class="right-tab" data-rtab="suggestions">
+            <span class="rtab-icon">✏️</span>
+            <span class="rtab-label">Rewrites</span>
+          </button>
+          <button class="right-tab" data-rtab="gaps">
+            <span class="rtab-icon">🎯</span>
+            <span class="rtab-label">Skill Gaps</span>
+          </button>
+          <button class="right-tab" data-rtab="optimize">
+            <span class="rtab-icon">⚡</span>
+            <span class="rtab-label">Optimize</span>
+          </button>
+        </div>
+
+        <!-- RESUME PREVIEW -->
+        <div class="right-panel-content active" id="rtab-preview">
+          <div class="preview-legend">
+            <span class="legend-item matched-legend">Matched keyword</span>
+          </div>
+          <div class="resume-preview" id="resumePreview"></div>
+        </div>
+
+        <!-- REWRITES -->
+        <div class="right-panel-content" id="rtab-suggestions">
+          <div class="suggestions-header">
+            <div class="card-header">AI Bullet Point Rewrites</div>
+            <p class="suggestions-sub">Detected weak bullet points — here's how to strengthen them:</p>
+          </div>
+          <div id="rewritesList"></div>
+
+          <!-- Missing keyword sentences -->
+          <div class="card-header" style="margin-top:24px">Suggested Keyword Sentences</div>
+          <p class="suggestions-sub">Add these to your resume to include missing high-impact keywords:</p>
+          <div id="keywordSentences"></div>
+
+          <!-- Quick wins -->
+          <div class="card-header" style="margin-top:24px">⚡ Quick Wins</div>
+          <div id="quickWins"></div>
+        </div>
+
+        <!-- SKILL GAPS -->
+        <div class="right-panel-content" id="rtab-gaps">
+          <div class="card-header">Skill Gap Intelligence</div>
+          <p class="suggestions-sub">Missing skills ranked by impact on your ATS score:</p>
+          <div id="skillGapList"></div>
+        </div>
+
+        <!-- OPTIMIZE MODE -->
+        <div class="right-panel-content" id="rtab-optimize">
+          <div class="optimize-banner">
+            <div class="optimize-icon">⚡</div>
+            <div>
+              <div class="optimize-title">ATS Optimization Mode</div>
+              <div class="optimize-sub">Complete action plan to maximize your score</div>
+            </div>
+          </div>
+          <div id="optimizeContent"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── ERROR TOAST ───── -->
+  <div id="errorToast" class="error-toast hidden">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="7" stroke="#ef4444" stroke-width="1.5" />
+      <path d="M8 5v3M8 10.5v.5" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+    <span id="errorMsg">An error occurred.</span>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+
+</html>
