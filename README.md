@@ -29,7 +29,22 @@ source venv/bin/activate
 python app.py
 ```
 
-Open **http://localhost:5000** in your browser.
+Open **http://localhost:5000** in your browser. You will see the new Project Intro page. Click **Get Started** to access the analyzer at `/analyzer`.
+
+---
+
+## 🌐 Deployment (Render)
+
+This project is configured for deployment on **Render**.
+
+### Outbound IP Addresses
+If you need to connect this service to external databases or APIs that require whitelisting, use these Render outbound IP ranges:
+- `74.220.49.0/24`
+- `74.220.57.0/24`
+
+### GitHub Integration
+Connect your GitHub repository to Render:
+**Repo:** [https://github.com/santoshmutyala26-lgtm/ATS_RESUME_ANALYSER](https://github.com/santoshmutyala26-lgtm/ATS_RESUME_ANALYSER)
 
 ---
 

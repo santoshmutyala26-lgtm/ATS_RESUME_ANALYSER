@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome — ATS Resume Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text1: #111827;
+      --text2: #4b5563;
+      --text3: #6b7280;
+      --purple: #000000;
+      --border: rgba(0,0,0,0.08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text1);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .college-header {
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      text-align: center;
+    }
+
+    .logo-img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      flex-shrink: 0;
+      opacity: 0.9;
+    }
+
+    .header-text {
+      flex: 1;
+    }
+
+    .college-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      color: var(--text1);
+    }
+
+    .college-sub {
+      font-size: 12px;
+      color: var(--text3);
+      max-width: 500px;
+      margin: 0 auto 2px;
+      font-weight: 400;
+    }
+
+    .dept-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-top: 8px;
+    }
+
+    .main-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 32px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .project-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.8px;
+      color: var(--text1);
+      margin-bottom: 32px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      text-align: left;
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .info-section h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text3);
+      margin-bottom: 12px;
+    }
+
+    .info-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text1);
+    }
+
+    .member-list {
+      list-style: none;
+    }
+
+    .member-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .member-id {
+      color: var(--text3);
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--purple);
+      color: white;
+      text-decoration: none;
+      padding: 14px 36px;
+      border-radius: 50px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      background: #111;
+    }
+
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text3);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .github-link:hover {
+      color: var(--text1);
+    }
+
+    .cta-btn svg {
+      transition: transform 0.3s;
+    }
+
+    .cta-btn:hover svg {
+      transform: translateX(5px);
+    }
+
+    @media (max-width: 768px) {
+      .info-grid { grid-template-columns: 1fr; gap: 30px; }
+      .main-card { padding: 40px 24px; }
+      .project-title { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="college-header">
+      <img src="/static/images/logo_left.png" alt="College Logo" class="logo-img">
+      
+      <div class="header-text">
+        <h1 class="college-name">Gayatri Vidya Parishad</h1>
+        <p class="college-sub">College for Degree and P.G Courses (A)</p>
+        <p class="college-sub">(Affiliated to Andhra University | Reaccredited by NAAC | ISO 9001: 2015)</p>
+        <p class="college-sub">Visakhapatnam - 530045</p>
+        <p class="dept-name">Bachelors of Science in Data Science</p>
+      </div>
+
+      <img src="/static/images/logo_right.png" alt="Department Logo" class="logo-img">
+    </header>
+
+    <main class="main-card">
+      <h2 class="project-title">ATS-Optimized Resume Analysis and Skill Gap Recommendation System</h2>
+      
+      <div class="info-grid">
+        <div class="info-section">
+          <h3>Project Guide</h3>
+          <div class="info-content">
+            <strong>Mrs. Y. Mounika Gayatri</strong><br>
+            Assistant Professor,<br>
+            Department of Computer Science
+          </div>
+        </div>
+        
+        <div class="info-section">
+          <h3>Project Members</h3>
+          <div class="info-content">
+            <ul class="member-list">
+              <li class="member-item">
+                <span>1. Ch. Hymavathi</span>
+                <span class="member-id">(2023-2422016)</span>
+              </li>
+              <li class="member-item">
+                <span>2. M. Santosh</span>
+                <span class="member-id">(2023-2422028)</span>
+              </li>
+              <li class="member-item">
+                <span>3. A. Prem Anand</span>
+                <span class="member-id">(2023-2422048)</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="cta-group">
+      <a href="/analyzer" class="cta-btn">
+        Get Started
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      
+      <a href="https://github.com/santoshmutyala26-lgtm/ATS_RESUME_ANALYSER" target="_blank" class="github-link">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.416-4.041-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.744.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>

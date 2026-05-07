@@ -35,7 +35,12 @@ def get_pipeline():
 
 
 @app.route("/")
-def index():
+def intro():
+    return render_template("intro.html")
+
+
+@app.route("/analyzer")
+def analyzer():
     return render_template("index.html")
 
 
