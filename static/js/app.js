@@ -69,6 +69,9 @@ function checkReady() {
   analyzeBtn.disabled = !(hasFile && hasJD);
 }
 
+// ─── Wake up server on load (for Render free tier) ───────
+fetch('/').catch(() => {}); // Silent ping to start wake-up
+
 // ─── Main analyze ──────────────────────────────
 analyzeBtn.addEventListener('click', async () => {
   if (analyzeBtn.disabled) return;
@@ -78,23 +81,39 @@ analyzeBtn.addEventListener('click', async () => {
   formData.append('job_description', jobDescTA.value.trim());
 
   showLoading();
+  let retries = 3;
 
-  try {
-    const resp = await fetch('/analyze', { method: 'POST', body: formData });
-    const data = await resp.json();
+  while (retries > 0) {
+    try {
+      const resp = await fetch('/analyze', { method: 'POST', body: formData });
+      const data = await resp.json();
 
-    if (!resp.ok) {
-      throw new Error(data.error || 'Analysis failed.');
+      if (!resp.ok) {
+        throw new Error(data.error || 'Analysis failed.');
+      }
+
+      analysisData = data;
+      hideLoading();
+      renderResults(data);
+      return; // Success, exit loop
+
+    } catch (err) {
+      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        retries--;
+        if (retries > 0) {
+          // Change the loading text to indicate it's waking up the server
+          document.querySelector('.loading-title').textContent = 'Waking up AI server...';
+          document.querySelector('.loading-sub').textContent = 'This takes ~50 seconds on the free plan. Please wait.';
+          // Wait 5 seconds before retrying
+          await new Promise(r => setTimeout(r, 5000));
+          continue;
+        }
+      }
+      hideLoading();
+      showError(err.message || 'Server error. Make sure the Flask backend is running.');
+      showScreen(uploadScreen);
+      return; // Final failure, exit
     }
-
-    analysisData = data;
-    hideLoading();
-    renderResults(data);
-
-  } catch (err) {
-    hideLoading();
-    showError(err.message || 'Server error. Make sure the Flask backend is running.');
-    showScreen(uploadScreen);
   }
 });
 
@@ -116,6 +135,8 @@ function showScreen(screen) {
 }
 
 function showLoading() {
+  document.querySelector('.loading-title').textContent = 'Analyzing Resume...';
+  document.querySelector('.loading-sub').textContent = 'Our AI is extracting skills and scoring your profile against the JD.';
   showScreen(loadingScreen);
   animateLoadingSteps();
 }
