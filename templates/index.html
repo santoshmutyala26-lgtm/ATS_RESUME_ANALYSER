@@ -102,6 +102,7 @@
           <span class="btn-arrow">→</span>
         </button>
       </div>
+      <div id="connectionStatus" style="font-size: 11px; color: var(--text3); margin-top: 12px; text-align: center; opacity: 0.8;">Preparing AI server...</div>
     </div>
   </div>
 
@@ -117,8 +118,8 @@
         <div class="loading-pct" id="loadingPct">0%</div>
       </div>
       <div class="loading-steps">
-        <div class="loading-title">Analyzing Resume...</div>
-        <div class="loading-sub">Our AI is extracting skills and scoring your profile against the JD.</div>
+        <div class="loading-title" id="loadingTitle">Analyzing Resume...</div>
+        <div class="loading-sub" id="loadingSub">Our AI is extracting skills and scoring your profile against the JD.</div>
         <div class="loading-step active" id="step1">Extracting resume text…</div>
         <div class="loading-step" id="step2">Running NLP pipeline…</div>
         <div class="loading-step" id="step3">Computing keyword matches…</div>

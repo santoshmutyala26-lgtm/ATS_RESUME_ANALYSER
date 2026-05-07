@@ -70,10 +70,16 @@ function checkReady() {
 }
 
 // ─── Wake up server on load (for Render free tier) ───────
-fetch('/').catch(() => {}); // Silent ping to start wake-up
+const statusEl = document.getElementById('connectionStatus');
+fetch('/').then(() => {
+  if (statusEl) statusEl.textContent = 'AI Server Ready';
+}).catch(() => {
+  if (statusEl) statusEl.textContent = 'Server starting... (waking up)';
+});
 
 // ─── Main analyze ──────────────────────────────
 analyzeBtn.addEventListener('click', async () => {
+  console.log('Analyze button clicked'); // Debug log
   if (analyzeBtn.disabled) return;
 
   const formData = new FormData();
@@ -86,6 +92,13 @@ analyzeBtn.addEventListener('click', async () => {
   while (retries > 0) {
     try {
       const resp = await fetch('/analyze', { method: 'POST', body: formData });
+      
+      // Handle non-JSON responses (like Render 502/504 timeouts)
+      const contentType = resp.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+         throw new Error("Network error during cold-start. Retrying...");
+      }
+
       const data = await resp.json();
 
       if (!resp.ok) {
@@ -95,24 +108,26 @@ analyzeBtn.addEventListener('click', async () => {
       analysisData = data;
       hideLoading();
       renderResults(data);
-      return; // Success, exit loop
+      return;
 
     } catch (err) {
-      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+      console.error('Fetch error:', err);
+      // Catch network errors OR the custom "Network error" we just threw
+      if (err.message.includes('fetch') || err.message.includes('Network') || err.message.includes('token')) {
         retries--;
         if (retries > 0) {
-          // Change the loading text to indicate it's waking up the server
-          document.querySelector('.loading-title').textContent = 'Waking up AI server...';
-          document.querySelector('.loading-sub').textContent = 'This takes ~50 seconds on the free plan. Please wait.';
-          // Wait 5 seconds before retrying
+          const title = document.getElementById('loadingTitle');
+          const sub = document.getElementById('loadingSub');
+          if (title) title.textContent = 'Waking up AI server...';
+          if (sub) sub.textContent = 'This takes ~50 seconds on the first try. Please wait.';
           await new Promise(r => setTimeout(r, 5000));
           continue;
         }
       }
       hideLoading();
-      showError(err.message || 'Server error. Make sure the Flask backend is running.');
+      showError(err.message || 'Server error. Please try again in 30 seconds.');
       showScreen(uploadScreen);
-      return; // Final failure, exit
+      return;
     }
   }
 });
@@ -135,8 +150,10 @@ function showScreen(screen) {
 }
 
 function showLoading() {
-  document.querySelector('.loading-title').textContent = 'Analyzing Resume...';
-  document.querySelector('.loading-sub').textContent = 'Our AI is extracting skills and scoring your profile against the JD.';
+  const title = document.getElementById('loadingTitle');
+  const sub = document.getElementById('loadingSub');
+  if (title) title.textContent = 'Analyzing Resume...';
+  if (sub) sub.textContent = 'Our AI is extracting skills and scoring your profile against the JD.';
   showScreen(loadingScreen);
   animateLoadingSteps();
 }
